@@ -46,7 +46,7 @@ namespace MagicVilla_VillaAPI.Controllers
             return Ok(_apiResponse);
         }
 
-        [HttpGet("id", Name = "GetVillaNumber")]
+        [HttpGet("{id:int}", Name = "GetVillaNumber")]
         //[Route("api/VillaAPI/GetVilla")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -82,6 +82,9 @@ namespace MagicVilla_VillaAPI.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateVilla([FromBody] VillaNumberCreateDTO createDTO)
         {
             try
@@ -89,7 +92,12 @@ namespace MagicVilla_VillaAPI.Controllers
                 var villaId = await _villaRepository.Get(x => x.Id == createDTO.VillaID);
                 if(villaId == null)
                 {
-                    ModelState.AddModelError("CustomError", "The number is invalid");
+                    ModelState.AddModelError("ErrorMessages", "The number is invalid");
+                    return BadRequest(ModelState);
+                }
+                if(await _repository.Get(x => x.VillaNo == createDTO.VillaNo) != null)
+                {
+                    ModelState.AddModelError("ErrorMessages", "Villa Number already exists!");
                     return BadRequest(ModelState);
                 }
                 if (createDTO == null)
@@ -159,7 +167,7 @@ namespace MagicVilla_VillaAPI.Controllers
                 var villaId = await _villaRepository.Get(x => x.Id == villaUpdateDTO.VillaID);
                 if (villaId == null)
                 {
-                    ModelState.AddModelError("CustomError", "The number is invalid");
+                    ModelState.AddModelError("ErrorMessages", "The number is invalid");
                     return BadRequest(ModelState);
                 }
 
