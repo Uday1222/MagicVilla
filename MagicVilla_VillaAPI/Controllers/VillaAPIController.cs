@@ -3,6 +3,7 @@ using MagicVilla_VillaAPI.Data;
 using MagicVilla_VillaAPI.Models;
 using MagicVilla_VillaAPI.Models.Dto;
 using MagicVilla_VillaAPI.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -15,6 +16,7 @@ namespace MagicVilla_VillaAPI.Controllers
     // To avoid that, we just hardcode the route uri
     [Route("api/VillaAPI")]
     [ApiController]
+    [Authorize]
     public class VillaAPIController : ControllerBase
     {
         private readonly ILogger<VillaAPIController> _logger;
@@ -55,7 +57,7 @@ namespace MagicVilla_VillaAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> GetVilla(int id)
         {
             try

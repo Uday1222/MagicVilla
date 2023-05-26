@@ -60,7 +60,7 @@ namespace MagicVilla_Web.Services
                 {
                     var APIResponse = JsonConvert.DeserializeObject<APIResponse>(apiContent);
 
-                    if (apiResponse != null)
+                    if (apiResponse != null && APIResponse != null)
                     {
                         APIResponse.StatusCode = apiResponse.StatusCode;
                         APIResponse.IsSuccess = apiResponse.IsSuccessStatusCode;

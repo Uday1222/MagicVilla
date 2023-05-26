@@ -14,6 +14,8 @@ namespace MagicVilla_VillaAPI.Data
 
         public DbSet<VillaNumber> villaNumber { get; set; }
 
+        public DbSet<LocalUser> LocalUsers { get; set; }
+
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
         //    modelBuilder.Entity<Villa>().HasData(
