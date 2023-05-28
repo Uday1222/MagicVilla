@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using MagicVilla_Utility;
 using MagicVilla_Web.Models;
 using MagicVilla_Web.Models.Dto;
 using MagicVilla_Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using NuGet.Common;
 using System.Diagnostics;
 
 namespace MagicVilla_Web.Controllers
@@ -21,7 +23,8 @@ namespace MagicVilla_Web.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var response = await _villaService.GetAllAsync<APIResponse>();
+            string token = HttpContext.Session.GetString(SD.SessionToken);
+            var response = await _villaService.GetAllAsync<APIResponse>(token);
 
             List<VillaDTO> list = new();
 
