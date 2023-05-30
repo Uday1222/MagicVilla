@@ -33,6 +33,9 @@ namespace MagicVilla_VillaAPI.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Authorize]
+        //[ResponseCache(Duration = 30)] - this is for caching individual response
+        [ResponseCache(CacheProfileName = "Default30")] // caching profile name should be same as declared in startup class caching profile
+        //[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<ActionResult<IEnumerable<APIResponse>>> GetVillas()
         {
             try

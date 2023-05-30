@@ -3,6 +3,7 @@ using MagicVilla_VillaAPI.Data;
 using MagicVilla_VillaAPI.Repository;
 using MagicVilla_VillaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -28,6 +29,17 @@ var builder = WebApplication.CreateBuilder(args);
 //options.ReturnHttpNotAcceptable = true
 //    ).AddNewtonsoftJson();//.AddXmlDataContractSerializerFormatters() - adding this will return the data in XML format
 // ReturnHttpNotAcceptable - it validates the Accept type of input data from(if the response is Json and input is xml then it throws error) - accepts Application/Json
+
+
+//Caching profile Added - when we need to cache all the service requests
+builder.Services.AddControllers(options =>
+{
+    options.CacheProfiles.Add("Default30",
+             new CacheProfile()
+             {
+                 Duration = 30
+             });
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
