@@ -6,8 +6,9 @@ using MagicVilla_VillaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+//using Newtonsoft.Json;
 using System.Net;
-using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace MagicVilla_VillaAPI.Controllers
 {
@@ -36,11 +37,32 @@ namespace MagicVilla_VillaAPI.Controllers
         //[ResponseCache(Duration = 30)] - this is for caching individual response
         [ResponseCache(CacheProfileName = "Default30")] // caching profile name should be same as declared in startup class caching profile
         //[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<ActionResult<IEnumerable<APIResponse>>> GetVillas()
+        public async Task<ActionResult<IEnumerable<APIResponse>>> GetVillas([FromQuery(Name = "filterOccupancy")] int? occupancy,
+            [FromQuery] string? search, int pageSize = 0, int pageNumber = 1)
         {
             try
             {
-                var result = await this.villaRepository.GetAll();
+                List<Villa> result;
+                if(occupancy > 0)
+                {
+                    result = await this.villaRepository.GetAll(x => x.Occupancy == occupancy, pageSize:pageSize, pageNumber:pageNumber);
+                }
+                else
+                {
+                    result = await this.villaRepository.GetAll(pageSize: pageSize, pageNumber: pageNumber);
+                }
+                if (!string.IsNullOrEmpty(search))
+                {
+                    result = result.Where(x => x.Name.ToLower().Contains(search)).ToList();
+                }
+
+                Pagination pagination = new ()
+                {
+                    PageSize = pageSize,
+                    PageNumber = pageNumber
+                };
+
+                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
 
                 _apiResponse.Result = _mapper.Map<List<VillaDTO>>(result);
                 _apiResponse.StatusCode = HttpStatusCode.OK;
